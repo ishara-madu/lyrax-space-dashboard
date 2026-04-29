@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { getPreviousLaunches } from "@/lib/spaceApi";
 import { getLaunchesFromDB } from "@/lib/mongodb";
-import { extractYoutubeVideoId } from "@/lib/utils";
+import { extractYoutubeVideoId, sanitizeSlug } from "@/lib/utils";
 import { LaunchCard } from "@/components/LaunchCard";
 import Link from "next/link";
 
@@ -60,7 +60,7 @@ async function MissionArchiveList() {
       image: doc.image_url || apiData?.image || apiData?.rocket?.configuration?.image_url || "",
       launch_service_provider: apiData?.launch_service_provider || { name: "Documented Archive" },
       vidURLs: apiData?.vidURLs || [],
-      slug: doc.slug,
+      slug: sanitizeSlug(doc.slug),
       status: apiData?.status
     };
   });

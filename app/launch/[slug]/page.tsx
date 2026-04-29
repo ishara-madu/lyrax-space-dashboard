@@ -1,6 +1,6 @@
 import { getLaunchById } from "@/lib/spaceApi";
 import { getLaunchesFromDB } from "@/lib/mongodb";
-import { extractYoutubeVideoId } from "@/lib/utils";
+import { extractYoutubeVideoId, sanitizeSlug } from "@/lib/utils";
 import { FallbackImage } from "@/components/FallbackImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: launch.name,
     description: descriptionSnippet,
-    keywords: articleData.primary_keyword ? [articleData.primary_keyword] : undefined,
+    keywords: articleData?.primary_keyword ? [articleData.primary_keyword] : undefined,
     alternates: {
       canonical: `/launch/${resolvedParams.slug}`,
     },
@@ -57,14 +57,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 const getArticleFromDB = React.cache(async (slug: string) => {
   try {
     const mongoDocs = await getLaunchesFromDB();
-    const article = mongoDocs.find(doc => doc.slug === slug || doc.launch_id === slug);
+    const article = mongoDocs.find(doc => {
+      const cleanSlug = sanitizeSlug(doc.slug);
+      return cleanSlug === slug || doc.launch_id === slug;
+    });
     return article ? {
       overview_html: article.overview_html,
       analysis_html: article.analysis_html,
       launch_id: article.launch_id,
+      primary_keyword: article.primary_keyword || null,
       created_at: article.created_at || null,
       updated_at: article.updated_at || null,
-      primary_keyword: article.primary_keyword || null,
     } : null;
   } catch (error) {
     console.error("Failed to fetch article from MongoDB:", error);

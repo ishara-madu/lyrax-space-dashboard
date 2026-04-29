@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import clientPromise from "@/lib/mongodb";
+import { sanitizeSlug } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -49,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const mongoDocs = await db.collection("launches").find({}).project({ slug: 1, launch_id: 1, updated_at: 1, _id: 0 }).toArray();
     
     const launchRoutes: MetadataRoute.Sitemap = mongoDocs.map((doc) => ({
-      url: `${baseUrl}/launch/${doc.slug || doc.launch_id}`,
+      url: `${baseUrl}/launch/${sanitizeSlug(doc.slug) || doc.launch_id}`,
       lastModified: doc.updated_at ? new Date(doc.updated_at) : new Date(),
       changeFrequency: 'daily',
       priority: 0.7,

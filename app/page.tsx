@@ -1,7 +1,7 @@
 import { LaunchCard } from "@/components/LaunchCard";
 import { getUpcomingLaunches, getPreviousLaunches } from "@/lib/spaceApi";
 import { getLaunchesFromDB } from "@/lib/mongodb";
-import { extractYoutubeVideoId } from "@/lib/utils";
+import { extractYoutubeVideoId, sanitizeSlug } from "@/lib/utils";
 
 import React from "react";
 import MapWrapper from "@/components/MapWrapper";
@@ -68,7 +68,10 @@ export default async function SpaceDashboard(props: {
   const mongoLaunchMap = new Map(
     mongoDocs.map((doc) => [
       doc.launch_id,
-      { overview_html: doc.overview_html, slug: doc.slug },
+      { 
+        overview_html: doc.overview_html, 
+        slug: sanitizeSlug(doc.slug)
+      },
     ]),
   );
 

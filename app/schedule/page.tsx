@@ -2,7 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { getUpcomingLaunches } from "@/lib/spaceApi";
 import { getLaunchesFromDB } from "@/lib/mongodb";
-import { extractYoutubeVideoId } from "@/lib/utils";
+import { extractYoutubeVideoId, sanitizeSlug } from "@/lib/utils";
 import { LaunchCard } from "@/components/LaunchCard";
 
 export const metadata: Metadata = {
@@ -43,7 +43,7 @@ const breadcrumbJsonLd = {
 export default async function SchedulePage() {
   // 1. Fetch from MongoDB
   const mongoDocs = await getLaunchesFromDB();
-  const mongoLaunchMap = new Map(mongoDocs.map(doc => [doc.launch_id, { overview_html: doc.overview_html, slug: doc.slug }]));
+  const mongoLaunchMap = new Map(mongoDocs.map(doc => [doc.launch_id, { overview_html: doc.overview_html, slug: sanitizeSlug(doc.slug) }]));
 
   // 2. Fetch from The Space Devs API
   const allLaunches = await getUpcomingLaunches(50);
