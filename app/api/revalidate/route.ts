@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const tag = request.nextUrl.searchParams.get("tag") || "launches";
 
   try {
-    revalidateTag(tag);
+    revalidateTag(tag, 'max' as any);
     return NextResponse.json({ revalidated: true, tag, now: Date.now() });
   } catch (err) {
     return NextResponse.json({ message: "Error revalidating", error: err }, { status: 500 });
