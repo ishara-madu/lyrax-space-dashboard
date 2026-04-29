@@ -61,7 +61,8 @@ async function MissionArchiveList() {
       launch_service_provider: apiData?.launch_service_provider || { name: "Documented Archive" },
       vidURLs: apiData?.vidURLs || [],
       slug: sanitizeSlug(doc.slug),
-      status: apiData?.status
+      status: apiData?.status,
+      webcast_live: apiData?.webcast_live
     };
   });
 
