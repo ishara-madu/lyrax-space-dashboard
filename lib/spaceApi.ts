@@ -46,7 +46,7 @@ if (!API_BASE_URL) {
 export async function getUpcomingLaunches(limit: number = 10): Promise<Launch[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/launch/upcoming/?limit=${limit}&mode=detailed`, {
-      next: { revalidate: 60 * 15 },
+      next: { revalidate: 60 * 15, tags: ["launches"] },
     });
 
     if (!res.ok) {
@@ -65,7 +65,7 @@ export async function getUpcomingLaunches(limit: number = 10): Promise<Launch[]>
 export async function getPreviousLaunches(limit: number = 1): Promise<Launch[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/launch/previous/?limit=${limit}&mode=detailed`, {
-      next: { revalidate: 60 * 15 },
+      next: { revalidate: 60 * 15, tags: ["launches"] },
     });
 
     if (!res.ok) {
@@ -84,7 +84,7 @@ export async function getPreviousLaunches(limit: number = 1): Promise<Launch[]> 
 export async function getLaunchById(id: string): Promise<Launch | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/launch/${id}/`, {
-      next: { revalidate: 60 * 15 },
+      next: { revalidate: 60 * 15, tags: ["launches"] },
     });
 
     if (!res.ok) {
