@@ -1,0 +1,64 @@
+
+> space-dashboard@0.1.0 lint /Users/ishara/Documents/space-dashboard
+> eslint
+
+
+/Users/ishara/Documents/space-dashboard/app/launch/[id]/page.tsx
+  4:8  warning  'Image' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ishara/Documents/space-dashboard/app/schedule/page.tsx
+  33:15  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ishara/Documents/space-dashboard/app/schedule/page.tsx:33:15
+  31 |   const allLaunches = await getUpcomingLaunches(50);
+  32 |   
+> 33 |   const now = Date.now();
+     |               ^^^^^^^^^^ Cannot call impure function
+  34 |   // Ensure strict time-filtering logic so no past launches appear,
+  35 |   // AND ensure they exist in our MongoDB database.
+  36 |   const upcomingLaunches = allLaunches.filter(launch => {  react-hooks/purity
+
+/Users/ishara/Documents/space-dashboard/app/terms/page.tsx
+  20:50   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  20:53   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  20:56   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  20:59   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  20:62   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  20:66   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  25:129  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  32:61   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  32:68   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  37:45   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  37:75   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  37:81   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  50:255  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ishara/Documents/space-dashboard/components/SatelliteTracker.tsx
+  50:12  warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  69:41  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  76:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/ishara/Documents/space-dashboard/components/SatelliteTracker.tsx:76:5
+  74 |     });
+  75 |
+> 76 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  77 |
+  78 |     // Fetch ISS using WhereTheISS.at
+  79 |     const fetchISS = async () => {  react-hooks/set-state-in-effect
+
+/Users/ishara/Documents/space-dashboard/lib/mongodb.ts
+  23:7  error  'globalWithMongo' is never reassigned. Use 'const' instead  prefer-const
+
+✖ 19 problems (17 errors, 2 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+
+ ELIFECYCLE  Command failed with exit code 1.

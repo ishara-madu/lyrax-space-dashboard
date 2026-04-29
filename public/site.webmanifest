@@ -1,0 +1,21 @@
+{
+  "name": "LyraX",
+  "short_name": "LyraX",
+  "description": "Live telemetry, upcoming rocket launches, and orbital satellite tracking dashboard.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030308",
+  "theme_color": "#030308",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
