@@ -100,7 +100,7 @@ export default async function SpaceDashboard(props: {
   if (videoId) {
     // Try to find in both pools
     selectedLaunch = [...upcomingLaunches, ...pastLaunches].find((l) =>
-      (l.vidURLs || []).some((u) => extractYoutubeVideoId(u.url) === videoId),
+      (l.vidURLs || []).some((u: { url: string }) => extractYoutubeVideoId(u.url) === videoId),
     );
   }
 
