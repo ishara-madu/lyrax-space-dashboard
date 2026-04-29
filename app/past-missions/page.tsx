@@ -4,7 +4,6 @@ import { getPreviousLaunches } from "@/lib/spaceApi";
 import { getLaunchesFromDB } from "@/lib/mongodb";
 import { extractYoutubeVideoId, sanitizeSlug } from "@/lib/utils";
 import { LaunchCard } from "@/components/LaunchCard";
-import { CardSkeleton } from "@/components/CardSkeleton";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -115,7 +114,7 @@ function ArchiveSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {[...Array(8)].map((_, i) => (
-        <CardSkeleton key={i} />
+        <div key={i} className="aspect-[4/5] rounded-2xl border border-white/10 bg-white/5 animate-pulse" />
       ))}
     </div>
   );
