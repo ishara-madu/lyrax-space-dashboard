@@ -116,10 +116,10 @@ export default async function SpaceDashboard(props: {
     // 1. Show currently live launch if available
     const liveLaunch = apiUpcoming.find((l) => l.webcast_live === true);
     if (liveLaunch) {
-      selectedLaunch = liveLaunch;
+      selectedLaunch = processLaunch(liveLaunch);
     } else {
       // 2. Fallback to latest post launch (even if not in MongoDB for the Hero)
-      selectedLaunch = latestPastLaunch;
+      selectedLaunch = latestPastLaunch ? processLaunch(latestPastLaunch) : null;
     }
   }
 
