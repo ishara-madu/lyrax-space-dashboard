@@ -282,46 +282,65 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Content Area */}
-          <div className="lg:col-span-3 space-y-12">
-            {/* Detailed Mission Information */}
-            <section className="bg-white/[0.02] border border-white/10 rounded-3xl p-8">
-              <h2 className="text-2xl font-bold tracking-tight text-zinc-100 mb-6">Mission Overview</h2>
-              {articleData?.overview_html ? (
-                <div 
-                  className="prose prose-invert max-w-none text-gray-300"
-                  dangerouslySetInnerHTML={{ __html: articleData.overview_html }}
-                />
-              ) : (
-                <p className="text-zinc-400 italic leading-relaxed text-lg">
-                  Our aerospace analysts are currently compiling the latest telemetry, payload specifications, and strategic data. The comprehensive flight report will be published shortly.
-                </p>
-              )}
-            </section>
-
-            {/* SEO Content: Mission Analysis from MongoDB */}
-            <section className="pt-8 border-t border-white/5">
-              <div className="space-y-8 text-zinc-400 leading-relaxed">
-                <h2 className="text-3xl font-extrabold text-zinc-100">Mission Details & Analysis</h2>
+          <div className="lg:col-span-3">
+            <div className="relative pl-8 md:pl-12 space-y-12 before:absolute before:left-[11px] md:before:left-[15px] before:top-2 before:bottom-2 before:w-[2px] before:bg-gradient-to-b before:from-indigo-500 before:via-blue-500/20 before:to-transparent">
+              
+              {/* Mission Overview Entry */}
+              <section className="relative group">
+                <div className="absolute left-[-41px] md:left-[-53px] top-2 w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#030308] border-2 border-indigo-500 z-10 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.4)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.6)] transition-shadow duration-300">
+                  <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-indigo-400 animate-pulse" />
+                </div>
                 
-                {articleData?.analysis_html ? (
-                  <div 
-                    className="prose prose-invert max-w-none text-gray-300"
-                    dangerouslySetInnerHTML={{ __html: articleData.analysis_html }}
-                  />
-                ) : (
-                  <div className="p-12 text-center border border-white/10 bg-white/5 rounded-3xl backdrop-blur-xl shadow-2xl relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 via-transparent to-blue-500/10 opacity-50" />
-                    <div className="relative z-10 flex flex-col items-center gap-4">
-                      <div className="w-12 h-12 rounded-full border-t-2 border-r-2 border-blue-400 animate-spin" />
-                      <h3 className="text-xl font-bold text-white tracking-wide">Mission Briefing Under Editorial Review</h3>
-                      <p className="text-zinc-400 max-w-md mx-auto text-sm">
-                        Our aerospace analysts are currently compiling the latest telemetry, payload specifications, and strategic data. The comprehensive flight report will be published shortly. Please check back soon.
-                      </p>
-                    </div>
+                <div className="relative p-6 md:p-8 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-2xl transition-all duration-300 group-hover:border-white/20">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="text-xs font-bold tracking-[0.2em] text-indigo-400 uppercase opacity-70">Entry 01</span>
+                    <h2 className="text-xl md:text-2xl font-black tracking-tighter text-zinc-100 uppercase italic">Mission Overview</h2>
                   </div>
-                )}
-              </div>
-            </section>
+                  
+                  {articleData?.overview_html ? (
+                    <div 
+                      className="prose prose-invert max-w-none text-zinc-300/90 leading-[1.8] text-base md:text-lg font-medium selection:bg-indigo-500/30"
+                      dangerouslySetInnerHTML={{ __html: articleData.overview_html }}
+                    />
+                  ) : (
+                    <p className="text-zinc-400 italic leading-[1.8] text-lg font-medium">
+                      Our aerospace analysts are currently compiling the latest telemetry, payload specifications, and strategic data. The comprehensive flight report will be published shortly.
+                    </p>
+                  )}
+                </div>
+              </section>
+
+              {/* Mission Details & Analysis Entry */}
+              <section className="relative group">
+                <div className="absolute left-[-41px] md:left-[-53px] top-2 w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#030308] border-2 border-blue-500 z-10 flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.4)] group-hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transition-shadow duration-300">
+                  <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-blue-400" />
+                </div>
+
+                <div className="relative p-6 md:p-8 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-2xl transition-all duration-300 group-hover:border-white/20">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="text-xs font-bold tracking-[0.2em] text-blue-400 uppercase opacity-70">Entry 02</span>
+                    <h2 className="text-xl md:text-2xl font-black tracking-tighter text-zinc-100 uppercase italic">Detailed Analysis</h2>
+                  </div>
+                  
+                  {articleData?.analysis_html ? (
+                    <div 
+                      className="prose prose-invert max-w-none text-zinc-300/90 leading-[1.8] text-base md:text-lg font-medium selection:bg-blue-500/30"
+                      dangerouslySetInnerHTML={{ __html: articleData.analysis_html }}
+                    />
+                  ) : (
+                    <div className="p-8 md:p-12 text-center rounded-2xl bg-white/[0.02] border border-white/5 relative overflow-hidden">
+                      <div className="relative z-10 flex flex-col items-center gap-4">
+                        <div className="w-10 h-10 rounded-full border-t-2 border-r-2 border-blue-400 animate-spin" />
+                        <h3 className="text-lg font-bold text-white tracking-wide uppercase italic">Decrypting Data Stream...</h3>
+                        <p className="text-zinc-500 max-w-md mx-auto text-sm leading-relaxed">
+                          Final telemetry validation in progress. The detailed mission logs and strategic insights are being processed by our orbital analysts.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
           </div>
 
           {/* Quick Facts Sidebar */}
