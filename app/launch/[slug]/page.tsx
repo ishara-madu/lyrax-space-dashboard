@@ -30,23 +30,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     descriptionSnippet = stripped.substring(0, 160) + (stripped.length > 160 ? "..." : "");
   }
 
+  const displayTitle = articleData.name || launch.name;
   const imageUrl = launch.image || launch.rocket?.configuration?.image_url || launch.infographic || "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?q=80&w=2070&auto=format&fit=crop";
 
   return {
-    title: launch.name,
+    title: displayTitle,
     description: descriptionSnippet,
+    keywords: articleData.primary_keyword ? [articleData.primary_keyword, "Space Launch", "Mission Details"] : ["Space Launch", "Mission Details"],
     alternates: {
       canonical: `/launch/${resolvedParams.slug}`,
     },
     openGraph: {
-      title: launch.name,
+      title: displayTitle,
       description: descriptionSnippet,
       images: [imageUrl],
       url: `${baseUrl}/launch/${resolvedParams.slug}`,
     },
     twitter: {
       card: "summary_large_image",
-      title: launch.name,
+      title: displayTitle,
       description: descriptionSnippet,
       images: [imageUrl],
     },
@@ -61,6 +63,8 @@ const getArticleFromDB = React.cache(async (slug: string) => {
       overview_html: article.overview_html,
       analysis_html: article.analysis_html,
       launch_id: article.launch_id,
+      name: article.name || null,
+      primary_keyword: article.primary_keyword || null,
       created_at: article.created_at || null,
       updated_at: article.updated_at || null,
     } : null;
@@ -98,10 +102,12 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
 
   const canonicalUrl = `${baseUrl}/launch/${resolvedParams.slug}`;
 
+  const displayTitle = articleData.name || launch.name;
+
   const eventJsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: launch.name,
+    name: displayTitle,
     startDate: launch.net,
     eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
     eventStatus: launch.status?.name?.toLowerCase().includes("success")
@@ -112,7 +118,7 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
       url: canonicalUrl
     },
     image: [imageUrl],
-    description: launch.mission?.description || launch.name,
+    description: launch.mission?.description || displayTitle,
     organizer: {
       "@type": "Organization",
       name: launch.launch_service_provider?.name || "Space Agency",
@@ -138,7 +144,7 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
       {
         "@type": "ListItem",
         position: 3,
-        name: launch.name,
+        name: displayTitle,
         item: canonicalUrl
       }
     ]
@@ -147,7 +153,7 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: launch.name,
+    headline: displayTitle,
     image: [imageUrl],
     url: canonicalUrl,
     datePublished: articleData?.created_at ? new Date(articleData.created_at).toISOString() : launch.net,
@@ -162,7 +168,8 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
       name: "LyraX",
       url: baseUrl
     },
-    description: launch.mission?.description || launch.name,
+    description: launch.mission?.description || displayTitle,
+    keywords: articleData.primary_keyword || undefined,
   };
 
   return (
@@ -190,7 +197,7 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
         <nav className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
           <Link href="/" className="hover:text-white transition-colors">Dashboard</Link>
           <span>/</span>
-          <span className="text-zinc-200 truncate max-w-[200px] sm:max-w-none">{launch.name}</span>
+          <span className="text-zinc-200 truncate max-w-[200px] sm:max-w-none">{displayTitle}</span>
         </nav>
 
         {/* Hero Details Section */}
@@ -199,7 +206,7 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
             <FallbackImage
               src={launch.image || launch.rocket?.configuration?.image_url || launch.infographic || (activeVideoId ? `https://img.youtube.com/vi/${activeVideoId}/hqdefault.jpg` : "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?q=80&w=2070&auto=format&fit=crop")}
               fallbackSrc={activeVideoId ? `https://img.youtube.com/vi/${activeVideoId}/hqdefault.jpg` : "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?q=80&w=2070&auto=format&fit=crop"}
-              alt={launch.name}
+              alt={articleData.primary_keyword ? `${displayTitle} - ${articleData.primary_keyword}` : displayTitle}
               fill
               unoptimized
               className="object-cover"
@@ -215,7 +222,7 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
                 {launch.launch_service_provider?.name || "Unknown Agency"}
               </span>
               <h1 className="mt-4 text-3xl md:text-5xl font-extrabold tracking-tighter text-white drop-shadow-sm leading-tight">
-                {launch.name}
+                {displayTitle}
               </h1>
             </div>
 

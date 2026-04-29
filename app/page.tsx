@@ -70,7 +70,8 @@ export default async function SpaceDashboard(props: {
       doc.launch_id,
       { 
         overview_html: doc.overview_html, 
-        slug: sanitizeSlug(doc.slug)
+        slug: sanitizeSlug(doc.slug),
+        name: doc.name
       },
     ]),
   );
@@ -78,11 +79,15 @@ export default async function SpaceDashboard(props: {
   const latestPastLaunch = apiPrevious[0] || null;
 
   // 3. Merge & Process with MongoDB data
-  const processLaunch = (launch: any) => ({
-    ...launch,
-    overview_html: mongoLaunchMap.get(launch.id)?.overview_html,
-    slug: mongoLaunchMap.get(launch.id)?.slug,
-  });
+  const processLaunch = (launch: any) => {
+    const mongoData = mongoLaunchMap.get(launch.id);
+    return {
+      ...launch,
+      name: mongoData?.name || launch.name,
+      overview_html: mongoData?.overview_html,
+      slug: mongoData?.slug,
+    };
+  };
 
   const now = new Date();
 

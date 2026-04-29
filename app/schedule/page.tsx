@@ -43,7 +43,11 @@ const breadcrumbJsonLd = {
 export default async function SchedulePage() {
   // 1. Fetch from MongoDB
   const mongoDocs = await getLaunchesFromDB();
-  const mongoLaunchMap = new Map(mongoDocs.map(doc => [doc.launch_id, { overview_html: doc.overview_html, slug: sanitizeSlug(doc.slug) }]));
+  const mongoLaunchMap = new Map(mongoDocs.map(doc => [doc.launch_id, { 
+    overview_html: doc.overview_html, 
+    slug: sanitizeSlug(doc.slug),
+    name: doc.name
+  }]));
 
   // 2. Fetch from The Space Devs API
   const allLaunches = await getUpcomingLaunches(50);
@@ -58,10 +62,14 @@ export default async function SchedulePage() {
       const existsInMongo = mongoLaunchMap.has(launch.id);
       return isFuture && existsInMongo;
     })
-    .map(launch => ({
-      ...launch,
-      slug: mongoLaunchMap.get(launch.id)?.slug
-    }));
+    .map(launch => {
+      const mongoData = mongoLaunchMap.get(launch.id);
+      return {
+        ...launch,
+        name: mongoData?.name || launch.name,
+        slug: mongoData?.slug
+      };
+    });
 
   return (
     <main className="relative z-10 container mx-auto px-4 py-16 md:py-20 max-w-7xl">
