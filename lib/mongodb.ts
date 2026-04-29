@@ -52,7 +52,7 @@ export const getLaunchesFromDB = unstable_cache(
     }
   },
   ["launches-list"],
-  { revalidate: 3600, tags: ["launches"] }
+  { revalidate: false, tags: ["launches"] }
 );
 
 export default clientPromise;
