@@ -227,9 +227,9 @@ export default async function SpaceDashboard(props: {
                     <div className="text-sm font-mono text-zinc-200">
                       {selectedLaunch
                         ? new Date(selectedLaunch.net).toLocaleString([], {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                          })
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })
                         : "TBD"}
                     </div>
                   </div>
@@ -356,7 +356,7 @@ export default async function SpaceDashboard(props: {
         {/* Section 3: Live Satellite Map Section */}
         <section className="space-y-6">
           <h2 className="text-2xl font-bold tracking-tight text-zinc-100">
-            Live Orbital Tracker (Starlink & ISS)
+            Live Orbital Tracker (ISS)
           </h2>
           <div className="relative w-full h-[500px]">
             <MapWrapper />
