@@ -14,7 +14,7 @@ export default function AppleIcon() {
   return new ImageResponse(
     <div
       style={{
-        background: "#0B0F19", // Dark space background
+        background: "#0B0F19",
         width: "100%",
         height: "100%",
         display: "flex",
@@ -22,8 +22,15 @@ export default function AppleIcon() {
         justifyContent: "center",
       }}
     >
-      <div style={{ color: "#E2E8F0" }}>
-        {/* Stylized Rocket SVG for 180x180 Apple Icon */}
+      {/* මෙතන දෙවෙනි div එකටත් display: flex දැම්මා */}
+      <div
+        style={{
+          color: "#E2E8F0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
         <svg
           width="110"
           height="110"
@@ -43,6 +50,6 @@ export default function AppleIcon() {
     </div>,
     {
       ...size,
-    },
+    }
   );
 }

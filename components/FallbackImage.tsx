@@ -11,9 +11,10 @@ interface FallbackImageProps {
   className?: string;
   sizes?: string;
   priority?: boolean;
+  unoptimized?: boolean;
 }
 
-export function FallbackImage({ src, fallbackSrc, alt, fill, className, sizes, priority }: FallbackImageProps) {
+export function FallbackImage({ src, fallbackSrc, alt, fill, className, sizes, priority, unoptimized }: FallbackImageProps) {
   const [imgError, setImgError] = useState(false);
   const currentSrc = imgError ? fallbackSrc : src;
 
@@ -25,6 +26,7 @@ export function FallbackImage({ src, fallbackSrc, alt, fill, className, sizes, p
       className={className}
       sizes={sizes}
       priority={priority}
+      unoptimized={unoptimized}
       onError={() => setImgError(true)}
     />
   );
