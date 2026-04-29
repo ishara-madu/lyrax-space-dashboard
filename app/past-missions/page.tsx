@@ -69,9 +69,8 @@ async function MissionArchiveList() {
 
   const pastMissions = missionsWithApiData
     .filter(m => {
-      const apiMatch = apiMap.get(m.id);
-      if (apiMatch) return true;
-      return new Date(m.net).getTime() < now;
+      const missionTime = new Date(m.net).getTime();
+      return missionTime > 0 && missionTime < now && m.webcast_live !== true;
     })
     .sort((a, b) => new Date(b.net).getTime() - new Date(a.net).getTime());
 

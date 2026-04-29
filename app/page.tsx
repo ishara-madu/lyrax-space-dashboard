@@ -95,12 +95,13 @@ export default async function SpaceDashboard(props: {
   const upcomingLaunches = apiUpcoming
     .filter((launch) => mongoLaunchMap.has(launch.id))
     .map(processLaunch)
-    .filter((l) => new Date(l.net) > now)
+    .filter((l) => new Date(l.net) > now || l.webcast_live === true)
     .sort((a, b) => new Date(a.net).getTime() - new Date(b.net).getTime());
 
   const pastLaunches = apiPrevious
     .filter((launch) => mongoLaunchMap.has(launch.id))
     .map(processLaunch)
+    .filter((l) => new Date(l.net) < now && l.webcast_live !== true)
     .sort((a, b) => new Date(b.net).getTime() - new Date(a.net).getTime());
 
   // Find the selected launch for the Hero Section

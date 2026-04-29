@@ -59,8 +59,9 @@ export default async function SchedulePage() {
   const upcomingLaunches = allLaunches
     .filter(launch => {
       const isFuture = new Date(launch.net).getTime() > now;
+      const isLive = launch.webcast_live === true;
       const existsInMongo = mongoLaunchMap.has(launch.id);
-      return isFuture && existsInMongo;
+      return (isFuture || isLive) && existsInMongo;
     })
     .map(launch => {
       const mongoData = mongoLaunchMap.get(launch.id);
