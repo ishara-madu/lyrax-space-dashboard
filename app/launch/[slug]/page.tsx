@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: launch.name,
     description: descriptionSnippet,
+    keywords: articleData.primary_keyword ? [articleData.primary_keyword] : undefined,
     alternates: {
       canonical: `/launch/${resolvedParams.slug}`,
     },
@@ -63,6 +64,7 @@ const getArticleFromDB = React.cache(async (slug: string) => {
       launch_id: article.launch_id,
       created_at: article.created_at || null,
       updated_at: article.updated_at || null,
+      primary_keyword: article.primary_keyword || null,
     } : null;
   } catch (error) {
     console.error("Failed to fetch article from MongoDB:", error);
