@@ -45,8 +45,8 @@ async function MissionArchiveList() {
   // 1. Fetch documented launches from MongoDB
   const mongoDocs = await getLaunchesFromDB();
 
-  // 2. Fetch enrichment data from API (Top 50 previous — 100 exceeds the 2MB fetch cache limit)
-  const apiPrevious = await getPreviousLaunches(50);
+  // 2. Fetch enrichment data from API (Top 100 previous)
+  const apiPrevious = await getPreviousLaunches(100);
   const apiMap = new Map(apiPrevious.map(l => [l.id, l]));
   
   // 3. Merge logic: prioritize MongoDB records

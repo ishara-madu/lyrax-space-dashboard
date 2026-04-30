@@ -9,9 +9,6 @@ export const metadata: Metadata = {
   title: "Full Rocket Launch Schedule | Upcoming Orbital Missions",
   description: "Stay updated with the complete schedule of all upcoming global rocket launches. Tracking SpaceX, NASA, Rocket Lab, and more missions in real-time.",
   keywords: ["Launch schedule", "Rocket launches", "SpaceX schedule", "NASA missions", "Space flight tracker"],
-  alternates: {
-    canonical: "/schedule",
-  },
 };
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

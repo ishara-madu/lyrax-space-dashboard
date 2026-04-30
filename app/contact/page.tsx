@@ -1,8 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://lyrax.live";
-
 export const metadata: Metadata = {
   title: "Contact Us | LyraX Support",
   description: "Get in touch with the LyraX mission control team. We welcome feedback, partnership inquiries, and technical questions about our orbital tracking data.",
@@ -11,28 +9,10 @@ export const metadata: Metadata = {
   },
 };
 
-const contactPageJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ContactPage",
-  name: "Contact LyraX",
-  description: "Get in touch with the LyraX mission control team for feedback, partnerships, or technical questions.",
-  url: `${baseUrl}/contact`,
-  publisher: {
-    "@type": "Organization",
-    name: "LyraX",
-    url: baseUrl,
-  },
-};
-
 export default function ContactPage() {
   return (
     <main className="relative z-10 container mx-auto px-4 py-20 max-w-3xl">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageJsonLd) }}
-      />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-
 
       <div className="relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 md:p-12 shadow-2xl">
         <div className="mb-10 text-center">

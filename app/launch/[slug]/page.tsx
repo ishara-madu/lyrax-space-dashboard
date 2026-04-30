@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const displayTitle = articleData.name || launch.name;
-  const imageUrl = launch.image || launch.rocket?.configuration?.image_url || launch.infographic || `${baseUrl}/og-image.png`;
+  const imageUrl = launch.image || launch.rocket?.configuration?.image_url || launch.infographic || "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?q=80&w=2070&auto=format&fit=crop";
 
   return {
     title: displayTitle,
@@ -157,11 +157,7 @@ export default async function LaunchDetailsPage({ params }: { params: Promise<{ 
     image: [imageUrl],
     url: canonicalUrl,
     datePublished: articleData?.created_at ? new Date(articleData.created_at).toISOString() : launch.net,
-    dateModified: articleData?.updated_at
-      ? new Date(articleData.updated_at).toISOString()
-      : articleData?.created_at
-        ? new Date(articleData.created_at).toISOString()
-        : launch.net,
+    dateModified: articleData?.updated_at ? new Date(articleData.updated_at).toISOString() : new Date().toISOString(),
     author: {
       "@type": "Organization",
       name: "LyraX",
