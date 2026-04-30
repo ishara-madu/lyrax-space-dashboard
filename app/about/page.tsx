@@ -1,10 +1,25 @@
 import type { Metadata } from "next";
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://lyrax.live";
+
 export const metadata: Metadata = {
-  title: "About Us | LyraX",
+  title: "About LyraX | Space Tracking Mission",
   description: "Learn about our team of space enthusiasts providing real-time orbital telemetry, mission tracking, and launch coverage for space fans worldwide.",
   alternates: {
     canonical: "/about",
+  },
+};
+
+const aboutPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About LyraX",
+  description: "Learn about our team of space enthusiasts providing real-time orbital telemetry, mission tracking, and launch coverage for space fans worldwide.",
+  url: `${baseUrl}/about`,
+  publisher: {
+    "@type": "Organization",
+    name: "LyraX",
+    url: baseUrl,
   },
 };
 
@@ -18,6 +33,11 @@ export default function AboutPage() {
 
   return (
     <main className="relative z-10 min-h-[calc(100vh-5rem)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }}
+      />
+
       {/* Ambient glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute left-1/2 top-0 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-indigo-600/8 blur-[140px]" />

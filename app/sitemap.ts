@@ -2,6 +2,8 @@ import type { MetadataRoute } from 'next'
 import clientPromise from "@/lib/mongodb";
 import { sanitizeSlug } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
