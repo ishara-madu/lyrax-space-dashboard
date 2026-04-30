@@ -43,9 +43,10 @@ if (!API_BASE_URL) {
   throw new Error('Invalid/Missing environment variable: "NEXT_PUBLIC_SPACE_API_URL"');
 }
 
-export async function getUpcomingLaunches(limit: number = 10): Promise<Launch[]> {
+export async function getUpcomingLaunches(limit: number = 10, offset: number = 0): Promise<Launch[]> {
+  const safeLimit = Math.min(limit, 20);
   try {
-    const res = await fetch(`${API_BASE_URL}/launch/upcoming/?limit=${limit}&mode=detailed`, {
+    const res = await fetch(`${API_BASE_URL}/launch/upcoming/?limit=${safeLimit}&offset=${offset}&mode=detailed`, {
       next: { revalidate: 60 * 15, tags: ["launches"] },
     });
 
@@ -62,9 +63,10 @@ export async function getUpcomingLaunches(limit: number = 10): Promise<Launch[]>
   }
 }
 
-export async function getPreviousLaunches(limit: number = 1): Promise<Launch[]> {
+export async function getPreviousLaunches(limit: number = 1, offset: number = 0): Promise<Launch[]> {
+  const safeLimit = Math.min(limit, 20);
   try {
-    const res = await fetch(`${API_BASE_URL}/launch/previous/?limit=${limit}&mode=detailed`, {
+    const res = await fetch(`${API_BASE_URL}/launch/previous/?limit=${safeLimit}&offset=${offset}&mode=detailed`, {
       next: { revalidate: 60 * 15, tags: ["launches"] },
     });
 

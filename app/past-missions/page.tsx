@@ -41,39 +41,44 @@ const breadcrumbJsonLd = {
   ]
 };
 
-async function MissionArchiveList() {
-  // 1. Fetch documented launches from MongoDB
-  const mongoDocs = await getLaunchesFromDB();
+async function MissionArchiveList({ page }: { page: number }) {
+  const limit = 20;
+  const offset = (page - 1) * limit;
 
-  // 2. Fetch enrichment data from API (Top 100 previous)
-  const apiPrevious = await getPreviousLaunches(100);
-  const apiMap = new Map(apiPrevious.map(l => [l.id, l]));
-  
-  // 3. Merge logic: prioritize MongoDB records
-  const missionsWithApiData = mongoDocs.map(doc => {
-    const apiData = apiMap.get(doc.launch_id);
-    
-    return {
-      id: doc.launch_id,
-      name: doc.name || apiData?.name || "Unknown Mission",
-      net: apiData?.net || doc.net || new Date(0).toISOString(), 
-      image: doc.image_url || apiData?.image || apiData?.rocket?.configuration?.image_url || "",
-      launch_service_provider: apiData?.launch_service_provider || { name: "Documented Archive" },
-      vidURLs: apiData?.vidURLs || [],
-      slug: sanitizeSlug(doc.slug),
-      status: apiData?.status,
-      webcast_live: apiData?.webcast_live
-    };
-  });
+  // 1. Fetch data safely using Promise.allSettled
+  const [mongoRes, apiRes] = await Promise.allSettled([
+    getLaunchesFromDB(),
+    getPreviousLaunches(limit, offset)
+  ]);
 
-  const now = new Date().getTime();
+  const mongoDocs = mongoRes.status === "fulfilled" ? mongoRes.value : [];
+  const apiPrevious = apiRes.status === "fulfilled" ? apiRes.value : [];
 
-  const pastMissions = missionsWithApiData
-    .filter(m => {
-      const missionTime = new Date(m.net).getTime();
-      return missionTime > 0 && missionTime < now && m.webcast_live !== true;
+  const mongoLaunchMap = new Map(mongoDocs.map(doc => [doc.launch_id, {
+    overview_html: doc.overview_html,
+    slug: sanitizeSlug(doc.slug),
+    name: doc.name,
+    image_url: doc.image_url,
+    vidURLs: doc.vidURLs
+  }]));
+
+  const now = Date.now();
+
+  const pastMissions = apiPrevious
+    .filter(launch => {
+      const missionTime = new Date(launch.net).getTime();
+      return missionTime > 0 && missionTime < now && launch.webcast_live !== true;
     })
-    .sort((a, b) => new Date(b.net).getTime() - new Date(a.net).getTime());
+    .map(launch => {
+      const mongoData = mongoLaunchMap.get(launch.id);
+      return {
+        ...launch,
+        name: mongoData?.name || launch.name,
+        slug: mongoData?.slug,
+        image: mongoData?.image_url || launch.image || launch.rocket?.configuration?.image_url || "",
+        vidURLs: (mongoData?.vidURLs && mongoData.vidURLs.length > 0) ? mongoData.vidURLs : launch.vidURLs,
+      };
+    });
 
   if (pastMissions.length === 0) {
     return (
@@ -83,7 +88,7 @@ async function MissionArchiveList() {
         </svg>
         <h3 className="text-2xl font-bold text-white mb-2">Archive Empty</h3>
         <p className="max-w-md mx-auto">
-          We found {mongoDocs.length} records in the database, but they didn&apos;t match the criteria.
+          There are currently no past missions on this page, or the API rate limit has been reached. Please check back later.
         </p>
       </div>
     );
@@ -120,7 +125,11 @@ function ArchiveSkeleton() {
   );
 }
 
-export default function PastMissionsPage() {
+export default async function PastMissionsPage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const page = Number(searchParams?.page) || 1;
   return (
     <main className="relative z-10 container mx-auto px-4 py-16 md:py-20 max-w-7xl">
       <script
@@ -152,8 +161,31 @@ export default function PastMissionsPage() {
         </div>
 
         <Suspense fallback={<ArchiveSkeleton />}>
-          <MissionArchiveList />
+          <MissionArchiveList page={page} />
         </Suspense>
+
+        <div className="mt-12 flex items-center justify-center gap-6">
+          {page > 1 && (
+            <Link 
+              href={`/past-missions?page=${page - 1}`} 
+              className="group flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white font-medium text-sm transition-all duration-300 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.02)]"
+            >
+              <svg className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous Page
+            </Link>
+          )}
+          <Link 
+            href={`/past-missions?page=${page + 1}`} 
+            className="group flex items-center gap-2 px-6 py-3 rounded-full bg-indigo-500/[0.1] hover:bg-indigo-500/[0.2] border border-indigo-500/20 hover:border-indigo-400/30 text-indigo-300 hover:text-indigo-200 font-medium text-sm transition-all duration-300 backdrop-blur-md shadow-[0_0_15px_rgba(99,102,241,0.1)]"
+          >
+            Next Page
+            <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
       </div>
     </main>
   );

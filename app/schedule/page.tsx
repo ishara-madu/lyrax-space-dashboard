@@ -4,6 +4,7 @@ import { getUpcomingLaunches } from "@/lib/spaceApi";
 import { getLaunchesFromDB } from "@/lib/mongodb";
 import { extractYoutubeVideoId, sanitizeSlug } from "@/lib/utils";
 import { LaunchCard } from "@/components/LaunchCard";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Full Rocket Launch Schedule | Upcoming Orbital Missions",
@@ -40,17 +41,30 @@ const breadcrumbJsonLd = {
   ]
 };
 
-export default async function SchedulePage() {
-  // 1. Fetch from MongoDB
-  const mongoDocs = await getLaunchesFromDB();
+export default async function SchedulePage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const page = Number(searchParams?.page) || 1;
+  const limit = 20;
+  const offset = (page - 1) * limit;
+
+  // 1. Fetch data safely using Promise.allSettled
+  const [mongoRes, apiRes] = await Promise.allSettled([
+    getLaunchesFromDB(),
+    getUpcomingLaunches(limit, offset)
+  ]);
+
+  const mongoDocs = mongoRes.status === "fulfilled" ? mongoRes.value : [];
+  const allLaunches = apiRes.status === "fulfilled" ? apiRes.value : [];
+
   const mongoLaunchMap = new Map(mongoDocs.map(doc => [doc.launch_id, { 
     overview_html: doc.overview_html, 
     slug: sanitizeSlug(doc.slug),
-    name: doc.name
+    name: doc.name,
+    image_url: doc.image_url,
+    vidURLs: doc.vidURLs
   }]));
-
-  // 2. Fetch from The Space Devs API
-  const allLaunches = await getUpcomingLaunches(50);
   
   // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
@@ -68,7 +82,9 @@ export default async function SchedulePage() {
       return {
         ...launch,
         name: mongoData?.name || launch.name,
-        slug: mongoData?.slug
+        slug: mongoData?.slug,
+        image: mongoData?.image_url || launch.image,
+        vidURLs: (mongoData?.vidURLs && mongoData.vidURLs.length > 0) ? mongoData.vidURLs : launch.vidURLs,
       };
     });
 
@@ -123,10 +139,33 @@ export default async function SchedulePage() {
             </svg>
             <h3 className="text-2xl font-bold text-white mb-2">No Upcoming Launches</h3>
             <p className="max-w-md mx-auto">
-              There are currently no scheduled launches in the immediate future, or the API rate limit has been reached. Please check back later.
+              There are currently no scheduled launches on this page, or the API rate limit has been reached. Please check back later.
             </p>
           </div>
         )}
+
+        <div className="mt-12 flex items-center justify-center gap-6">
+          {page > 1 && (
+            <Link 
+              href={`/schedule?page=${page - 1}`} 
+              className="group flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white font-medium text-sm transition-all duration-300 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.02)]"
+            >
+              <svg className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous Page
+            </Link>
+          )}
+          <Link 
+            href={`/schedule?page=${page + 1}`} 
+            className="group flex items-center gap-2 px-6 py-3 rounded-full bg-indigo-500/[0.1] hover:bg-indigo-500/[0.2] border border-indigo-500/20 hover:border-indigo-400/30 text-indigo-300 hover:text-indigo-200 font-medium text-sm transition-all duration-300 backdrop-blur-md shadow-[0_0_15px_rgba(99,102,241,0.1)]"
+          >
+            Next Page
+            <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
       </div>
     </main>
   );

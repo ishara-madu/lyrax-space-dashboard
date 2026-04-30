@@ -58,12 +58,16 @@ export default async function SpaceDashboard(props: {
   const videoId =
     typeof searchParams.videoId === "string" ? searchParams.videoId : null;
 
-  // 1. Fetch all data in parallel for maximum performance
-  const [mongoDocs, apiUpcoming, apiPrevious] = await Promise.all([
+  // 1. Fetch all data safely using Promise.allSettled
+  const [mongoRes, apiUpcomingRes, apiPreviousRes] = await Promise.allSettled([
     getLaunchesFromDB(),
-    getUpcomingLaunches(50),
-    getPreviousLaunches(20),
+    getUpcomingLaunches(10, 0),
+    getPreviousLaunches(10, 0),
   ]);
+
+  const mongoDocs = mongoRes.status === "fulfilled" ? mongoRes.value : [];
+  const apiUpcoming = apiUpcomingRes.status === "fulfilled" ? apiUpcomingRes.value : [];
+  const apiPrevious = apiPreviousRes.status === "fulfilled" ? apiPreviousRes.value : [];
 
   const mongoLaunchMap = new Map(
     mongoDocs.map((doc) => [
@@ -71,7 +75,9 @@ export default async function SpaceDashboard(props: {
       { 
         overview_html: doc.overview_html, 
         slug: sanitizeSlug(doc.slug),
-        name: doc.name
+        name: doc.name,
+        image_url: doc.image_url,
+        vidURLs: doc.vidURLs
       },
     ]),
   );
@@ -86,6 +92,8 @@ export default async function SpaceDashboard(props: {
       name: mongoData?.name || launch.name,
       overview_html: mongoData?.overview_html,
       slug: mongoData?.slug,
+      image: mongoData?.image_url || launch.image,
+      vidURLs: (mongoData?.vidURLs && mongoData.vidURLs.length > 0) ? mongoData.vidURLs : launch.vidURLs,
     };
   };
 
