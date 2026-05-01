@@ -58,14 +58,14 @@ export default async function SchedulePage(props: {
   const mongoDocs = mongoRes.status === "fulfilled" ? mongoRes.value : [];
   const allLaunches = apiRes.status === "fulfilled" ? apiRes.value : [];
 
-  const mongoLaunchMap = new Map(mongoDocs.map(doc => [doc.launch_id, { 
-    overview_html: doc.overview_html, 
+  const mongoLaunchMap = new Map(mongoDocs.map(doc => [doc.launch_id, {
+    overview_html: doc.overview_html,
     slug: sanitizeSlug(doc.slug),
     name: doc.name,
     image_url: doc.image_url,
     vidURLs: doc.vidURLs
   }]));
-  
+
   // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
   // Ensure strict time-filtering logic so no past launches appear,
@@ -146,8 +146,8 @@ export default async function SchedulePage(props: {
 
         <div className="mt-12 flex items-center justify-center gap-6">
           {page > 1 && (
-            <Link 
-              href={`/schedule?page=${page - 1}`} 
+            <Link
+              href={`/schedule?page=${page - 1}`}
               className="group flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white font-medium text-sm transition-all duration-300 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.02)]"
             >
               <svg className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,8 +156,8 @@ export default async function SchedulePage(props: {
               Previous Page
             </Link>
           )}
-          <Link 
-            href={`/schedule?page=${page + 1}`} 
+          <Link
+            href={`/schedule?page=${page + 1}`}
             className="group flex items-center gap-2 px-6 py-3 rounded-full bg-indigo-500/[0.1] hover:bg-indigo-500/[0.2] border border-indigo-500/20 hover:border-indigo-400/30 text-indigo-300 hover:text-indigo-200 font-medium text-sm transition-all duration-300 backdrop-blur-md shadow-[0_0_15px_rgba(99,102,241,0.1)]"
           >
             Next Page
